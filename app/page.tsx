@@ -32,6 +32,7 @@ export default function Home() {
   const [showCriar, setShowCriar] = useState(false);
   const [showEditar, setShowEditar] = useState(false);
   const [showExcluir, setShowExcluir] = useState(false);
+  const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
 
   async function fetchData() {
     setLoading(true);
@@ -134,7 +135,10 @@ export default function Home() {
                             size="icon"
                             aria-label={`Editar ${todo.id}`}
                             className="border border-muted-foreground/50"
-                            onClick={() => setShowEditar(true)}
+                            onClick={() => {
+                              setSelectedTodo(todo);
+                              setShowEditar(true);
+                            }}
                           >
                             <Pencil />
                           </Button>
@@ -158,8 +162,8 @@ export default function Home() {
       </div>
 
       <CreateModal open={showCriar} onOpenChange={setShowCriar} />
-      <EditarModal open={showEditar} onOpenChange={setShowEditar} />
-      <DeleteModal open={showExcluir} onOpenChange={setShowExcluir} />
+      <EditarModal open={showEditar} onOpenChange={setShowEditar} title={selectedTodo?.title ?? ''} status={selectedTodo?.completed ?? false} />
+      <DeleteModal open={showExcluir} onOpenChange={setShowExcluir} id={selectedTodo?.id ?? 0} />
     </>
   );
 }

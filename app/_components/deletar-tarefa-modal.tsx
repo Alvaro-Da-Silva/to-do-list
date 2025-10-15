@@ -35,7 +35,9 @@ export default function DeleteModal({ open, onOpenChange, id, onConfirm }: Delet
             <DialogContent className='sm:max-w-sm p-0 overflow-hidden'>
                 <div className='flex flex-col md:flex-row'>
                     <div className='flex items-center justify-center p-6 bg-red-50 md:w-20'>
+                        <div className="rounded-full bg-white p-2 shadow-sm">
                             <CircleAlert className='size-8 text-red-600' />
+                            </div>
                     </div>
 
                     <div className='p-6 flex-1'>
