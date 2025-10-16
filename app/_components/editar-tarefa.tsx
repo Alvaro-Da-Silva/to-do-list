@@ -8,12 +8,15 @@ import { toast } from "sonner";
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Edit } from "lucide-react";
+import axios from "axios";
 
 interface EditarTarefaProps {
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
+    id: number;
     title: string;
     status: boolean;
+    onSuccess?: (updatedTodo: any) => void;
 }
 
 type FormValues = {
@@ -21,7 +24,7 @@ type FormValues = {
     status: boolean;
 }
 
-export default function EditarModal({ open, onOpenChange, title, status }: EditarTarefaProps) {
+export default function EditarModal({ open, onOpenChange, id, title, status, onSuccess }: EditarTarefaProps) {
     const form = useForm<FormValues>({ defaultValues: { title, status } });
     const [submitting, setSubmitting] = React.useState(false);
 
@@ -31,16 +34,31 @@ export default function EditarModal({ open, onOpenChange, title, status }: Edita
         }
     }, [open, title, status]);
 
-    async function onSubmit(data: FormValues) {
+    async function onSubmit(formData: FormValues) {
+        setSubmitting(true);
         try {
-            setSubmitting(true);
-            console.log('Atualizando', data);
-            toast.success('Tarefa atualizada com sucesso!', { closeButton: true });
-            form.reset();
-            onOpenChange?.(false);
+            console.log('Atualizando tarefa:', { id, ...formData });
+            
+            const response = await axios.put(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+                id: id,
+                title: formData.title,
+                completed: formData.status,
+                userId: 1
+            });
+            
+            console.log('Resposta da API (PUT):', response.data);
+            
+            if (response.status === 200) {
+                toast.success('Tarefa atualizada com sucesso!');
+                form.reset();
+                onOpenChange?.(false);
+                onSuccess?.(response.data);
+            } else {
+                throw new Error('Falha na atualização da tarefa');
+            }
         } catch (error) {
             console.error('Erro ao atualizar a tarefa:', error);
-            toast.error('Erro ao atualizar a tarefa.', { closeButton: true });
+            toast.error('Erro ao atualizar a tarefa.');
         } finally {
             setSubmitting(false);
         }

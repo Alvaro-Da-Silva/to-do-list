@@ -3,28 +3,37 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { CircleAlert } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
+import axios from "axios";
 
 interface DeleteModalProps {
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
     id: number;
-    onConfirm?: () => Promise<void> | void;
+    onSuccess?: (deletedId: number) => void;
 }
 
-export default function DeleteModal({ open, onOpenChange, id, onConfirm }: DeleteModalProps) {
+export default function DeleteModal({ open, onOpenChange, id, onSuccess }: DeleteModalProps) {
     const [deleting, setDeleting] = React.useState(false);
 
     const handleDelete = async () => {
+        setDeleting(true);
         try {
-            setDeleting(true);
-            if (onConfirm) {
-                await onConfirm();
+            console.log('Excluindo tarefa:', id);
+            
+            const response = await axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`);
+            
+            console.log('Resposta da API (DELETE):', response.status);
+            
+            if (response.status === 200) {
+                toast.success("Tarefa excluída com sucesso!");
+                onOpenChange?.(false);
+                onSuccess?.(id);
+            } else {
+                throw new Error('Falha na exclusão da tarefa');
             }
-            toast.success("Tarefa excluída com sucesso!", { closeButton: true });
-            onOpenChange?.(false);
         } catch (error) {
             console.error('Erro ao excluir a tarefa:', error);
-            toast.error('Erro ao excluir a tarefa.', { closeButton: true });
+            toast.error('Erro ao excluir a tarefa.');
         } finally {
             setDeleting(false);
         }

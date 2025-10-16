@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { FieldGroup } from "@/components/ui/field";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
@@ -8,10 +7,12 @@ import { toast } from "sonner";
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus } from "lucide-react";
+import axios from "axios";
 
 interface CreateModalProps {
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
+    onSuccess?: (newTodo?: any) => void;
 }
 
 type FormValues = {
@@ -19,20 +20,30 @@ type FormValues = {
     status: boolean;
 }
 
-export default function CreateModal({ open, onOpenChange }: CreateModalProps) {
-    const form = useForm<FormValues>({ defaultValues: { title: '' } });
+export default function CreateModal({ open, onOpenChange, onSuccess }: CreateModalProps) {
+    const form = useForm<FormValues>({ defaultValues: { title: '', status: false } });
     const [submitting, setSubmitting] = React.useState(false);
 
-    async function onSubmit(data: FormValues) {
+    async function onSubmit(formData: FormValues) {
+        setSubmitting(true);
         try {
-            setSubmitting(true);
-            console.log('Salvando', data);
-            toast.success('Tarefa criada com sucesso!', { closeButton: true });
-            form.reset();
-            onOpenChange?.(false);
+            console.log('Enviando dados:', formData);
+            const response = await axios.post('https://jsonplaceholder.typicode.com/todos', {
+                title: formData.title,
+                completed: formData.status,
+                userId: 1
+            });
+            console.log('Resposta da API:', response.data);
+            
+            if (response.status === 201) {
+                toast.success('Tarefa criada com sucesso!');
+                form.reset();
+                onOpenChange?.(false);
+                onSuccess?.(response.data);
+            }
         } catch (error) {
-            console.error('Erro ao criar a tarefa:', error);
-            toast.error('Erro ao criar a tarefa.', { closeButton: true });
+            console.error('Erro completo:', error);
+            toast.error('Erro ao criar a tarefa. Tente novamente.');
         } finally {
             setSubmitting(false);
         }

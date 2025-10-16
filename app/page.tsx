@@ -11,13 +11,11 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Pencil, Plus, TrashIcon } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-import clsx from "clsx";
+import { Plus } from "lucide-react";
 import DeleteModal from "./_components/deletar-tarefa-modal";
 import CreateModal from "./_components/criar-tarefa-modal";
 import EditarModal from "./_components/editar-tarefa";
-
+import Render from "@/components/Render";
 type Todo = {
   userId: number;
   id: number;
@@ -41,13 +39,65 @@ export default function Home() {
       const response = await axios.get<Todo[]>(
         "https://jsonplaceholder.typicode.com/todos"
       );
-      setTodos(response.data.slice(0, 100));
+      setTodos(response.data.slice(0, 10)); 
     } catch (err) {
       console.error("Error fetching data:", err);
       setError("Falha ao carregar os dados");
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleEdit(todo: Todo) {
+    setSelectedTodo(todo);
+    setShowEditar(true);
+  }
+
+  function handleDelete(todo: Todo) {
+    setSelectedTodo(todo);
+    setShowExcluir(true);
+  }
+
+  function handleTaskCreated(newTodo?: any) {
+    console.log('handleTaskCreated chamado com:', newTodo);
+    if (newTodo) {
+      console.log('Adicionando nova tarefa à lista');
+      setTodos(prev => {
+        // Encontrar o maior ID atual e incrementar
+        const maxId = prev.length > 0 ? Math.max(...prev.map(todo => todo.id)) : 0;
+        const nextId = maxId + 1;
+        
+        const taskWithSequentialId = {
+          ...newTodo,
+          id: nextId
+        };
+        console.log('Tarefa com ID sequencial:', taskWithSequentialId);
+        
+        // Adicionar no final da lista
+        const newList = [...prev, taskWithSequentialId];
+        console.log('Nova lista:', newList.length, 'itens');
+        return newList;
+      });
+    } else {
+      console.log('Recarregando lista completa');
+      fetchData();
+    }
+  }
+
+  function handleTaskUpdated(updatedTodo: any) {
+    console.log('handleTaskUpdated chamado com:', updatedTodo);
+    setTodos(prev => 
+      prev.map(todo => 
+        todo.id === updatedTodo.id 
+          ? { ...todo, title: updatedTodo.title, completed: updatedTodo.completed }
+          : todo
+      )
+    );
+  }
+
+  function handleTaskDeleted(deletedId: number) {
+    console.log('handleTaskDeleted chamado com ID:', deletedId);
+    setTodos(prev => prev.filter(todo => todo.id !== deletedId));
   }
 
   useEffect(() => {
@@ -57,6 +107,7 @@ export default function Home() {
   function toggleCompleted(id: number) {
     setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
   }
+
 
   return (
     <>
@@ -111,48 +162,15 @@ export default function Home() {
                   )}
 
                   {todos.map((todo) => (
-                    <TableRow key={todo.id}
-                      className={clsx(
-                        "transition-color duration-200",
-                        { 'bg-chart-2/40 hover:bg-chart-2/30': todo.completed }
-                      )}
-                    >
-                      <TableCell className="rounded-l-md font-medium">{todo.id}</TableCell>
-                      <TableCell className="truncate max-w-[40ch]">
-                        {todo.title}
-                      </TableCell>
-                      <TableCell>
-                        <Checkbox
-                          checked={todo.completed}
-                          onCheckedChange={() => toggleCompleted(todo.id)}
-                          className={clsx("cursor-pointer", todo.completed ? 'text-chart-2' : 'border-primary')}
-                        />
-                      </TableCell>
-                      <TableCell className="rounded-r-md">
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            aria-label={`Editar ${todo.id}`}
-                            className="border border-muted-foreground/50"
-                            onClick={() => {
-                              setSelectedTodo(todo);
-                              setShowEditar(true);
-                            }}
-                          >
-                            <Pencil />
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="icon"
-                            aria-label={`Remover ${todo.id}`}
-                            onClick={() => setShowExcluir(true)}
-                          >
-                            <TrashIcon />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
+                    <Render
+                      key={todo.id}
+                      id={todo.id}
+                      title={todo.title}
+                      completed={todo.completed}
+                      onToggle={toggleCompleted}
+                      onEdit={() => handleEdit(todo)}
+                      onDelete={() => handleDelete(todo)}
+                    />
                   ))}
                 </TableBody>
               </Table>
@@ -161,9 +179,21 @@ export default function Home() {
         </div>
       </div>
 
-      <CreateModal open={showCriar} onOpenChange={setShowCriar} />
-      <EditarModal open={showEditar} onOpenChange={setShowEditar} title={selectedTodo?.title ?? ''} status={selectedTodo?.completed ?? false} />
-      <DeleteModal open={showExcluir} onOpenChange={setShowExcluir} id={selectedTodo?.id ?? 0} />
+      <CreateModal open={showCriar} onOpenChange={setShowCriar} onSuccess={handleTaskCreated} />
+      <EditarModal 
+        open={showEditar} 
+        onOpenChange={setShowEditar} 
+        id={selectedTodo?.id ?? 0}
+        title={selectedTodo?.title ?? ''} 
+        status={selectedTodo?.completed ?? false}
+        onSuccess={handleTaskUpdated}
+      />
+      <DeleteModal 
+        open={showExcluir} 
+        onOpenChange={setShowExcluir} 
+        id={selectedTodo?.id ?? 0}
+        onSuccess={handleTaskDeleted}
+      />
     </>
   );
 }
