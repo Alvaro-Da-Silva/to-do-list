@@ -24,30 +24,9 @@ export default function CreateModal({ open, onOpenChange, onSuccess }: CreateMod
     const form = useForm<FormValues>({ defaultValues: { title: '', status: false } });
     const [submitting, setSubmitting] = React.useState(false);
 
-    async function onSubmit(formData: FormValues) {
-        setSubmitting(true);
-        try {
-            console.log('Enviando dados:', formData);
-            const response = await axios.post('https://jsonplaceholder.typicode.com/todos', {
-                title: formData.title,
-                completed: formData.status,
-                userId: 1
-            });
-            console.log('Resposta da API:', response.data);
-            
-            if (response.status === 201) {
-                toast.success('Tarefa criada com sucesso!');
-                form.reset();
-                onOpenChange?.(false);
-                onSuccess?.(response.data);
-            }
-        } catch (error) {
-            console.error('Erro completo:', error);
-            toast.error('Erro ao criar a tarefa. Tente novamente.');
-        } finally {
-            setSubmitting(false);
-        }
-    }
+//aqui vai o onSubmit(POST)
+ 
+    
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>

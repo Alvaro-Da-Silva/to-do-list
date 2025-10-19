@@ -15,29 +15,8 @@ interface DeleteModalProps {
 export default function DeleteModal({ open, onOpenChange, id, onSuccess }: DeleteModalProps) {
     const [deleting, setDeleting] = React.useState(false);
 
-    const handleDelete = async () => {
-        setDeleting(true);
-        try {
-            console.log('Excluindo tarefa:', id);
-            
-            const response = await axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`);
-            
-            console.log('Resposta da API (DELETE):', response.status);
-            
-            if (response.status === 200) {
-                toast.success("Tarefa excluída com sucesso!");
-                onOpenChange?.(false);
-                onSuccess?.(id);
-            } else {
-                throw new Error('Falha na exclusão da tarefa');
-            }
-        } catch (error) {
-            console.error('Erro ao excluir a tarefa:', error);
-            toast.error('Erro ao excluir a tarefa.');
-        } finally {
-            setDeleting(false);
-        }
-    };
+//aqui vai a handleDelete(DELETE)
+    
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>

@@ -32,21 +32,10 @@ export default function Home() {
   const [showExcluir, setShowExcluir] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
 
-  async function fetchData() {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios.get<Todo[]>(
-        "https://jsonplaceholder.typicode.com/todos"
-      );
-      setTodos(response.data.slice(0, 10)); 
-    } catch (err) {
-      console.error("Error fetching data:", err);
-      setError("Falha ao carregar os dados");
-    } finally {
-      setLoading(false);
-    }
-  }
+//aqui vai o fetchData(GET)
+
+
+
 
   function handleEdit(todo: Todo) {
     setSelectedTodo(todo);
@@ -160,18 +149,10 @@ export default function Home() {
                       <TableCell colSpan={4}>Nenhuma tarefa encontrada</TableCell>
                     </TableRow>
                   )}
+{/* //Aqui vai o map(GET) */}
 
-                  {todos.map((todo) => (
-                    <Render
-                      key={todo.id}
-                      id={todo.id}
-                      title={todo.title}
-                      completed={todo.completed}
-                      onToggle={toggleCompleted}
-                      onEdit={() => handleEdit(todo)}
-                      onDelete={() => handleDelete(todo)}
-                    />
-                  ))}
+
+
                 </TableBody>
               </Table>
             </div>

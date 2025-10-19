@@ -33,36 +33,8 @@ export default function EditarModal({ open, onOpenChange, id, title, status, onS
             form.reset({ title, status });
         }
     }, [open, title, status]);
-
-    async function onSubmit(formData: FormValues) {
-        setSubmitting(true);
-        try {
-            console.log('Atualizando tarefa:', { id, ...formData });
-            
-            const response = await axios.put(`https://jsonplaceholder.typicode.com/todos/${id}`, {
-                id: id,
-                title: formData.title,
-                completed: formData.status,
-                userId: 1
-            });
-            
-            console.log('Resposta da API (PUT):', response.data);
-            
-            if (response.status === 200) {
-                toast.success('Tarefa atualizada com sucesso!');
-                form.reset();
-                onOpenChange?.(false);
-                onSuccess?.(response.data);
-            } else {
-                throw new Error('Falha na atualização da tarefa');
-            }
-        } catch (error) {
-            console.error('Erro ao atualizar a tarefa:', error);
-            toast.error('Erro ao atualizar a tarefa.');
-        } finally {
-            setSubmitting(false);
-        }
-    }
+//aqui vai a onSubmit(PUT)
+    
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
