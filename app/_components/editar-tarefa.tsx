@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { FieldGroup } from "@/components/ui/field";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
@@ -26,14 +25,14 @@ type FormValues = {
 
 export default function EditarModal({ open, onOpenChange, id, title, status, onSuccess }: EditarTarefaProps) {
     const form = useForm<FormValues>({ defaultValues: { title, status } });
-    const [submitting, setSubmitting] = React.useState(false);
 
     React.useEffect(() => {
         if (open) {
             form.reset({ title, status });
         }
     }, [open, title, status]);
-//aqui vai a onSubmit(PUT)
+
+    //aqui vai o putData(PUT)
     
 
     return (
@@ -56,8 +55,10 @@ export default function EditarModal({ open, onOpenChange, id, title, status, onS
                         </div>
 
                         <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)}>
+                            {/* Chamar putData no handleSubmit */}
+                            <form onSubmit={form.handleSubmit()}>
                                 <div className="space-y-3">
+                                    
                                     <FormField
                                         name="title"
                                         render={({ field }) => (
@@ -75,7 +76,11 @@ export default function EditarModal({ open, onOpenChange, id, title, status, onS
                                             <FormItem>
                                                 <FormControl>
                                                     <div className="flex items-center gap-3">
-                                                        <Checkbox checked={!!field.value} onCheckedChange={(v) => field.onChange(Boolean(v))} className="h-5 w-5 rounded border-primary/50" />
+                                                        <Checkbox
+                                                            checked={!!field.value}
+                                                            onCheckedChange={(v) => field.onChange(Boolean(v))}
+                                                            className="h-5 w-5 rounded border-primary/50"
+                                                        />
                                                         <span className="select-none">Concluída</span>
                                                     </div>
                                                 </FormControl>
@@ -85,11 +90,11 @@ export default function EditarModal({ open, onOpenChange, id, title, status, onS
                                 </div>
 
                                 <div className="mt-4 flex justify-end gap-2">
-                                    <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange?.(false)} disabled={submitting}>
+                                    <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange?.(false)}>
                                         Cancelar
                                     </Button>
-                                    <Button type="submit" size="sm" disabled={submitting}>
-                                        {submitting ? 'Salvando...' : 'Salvar'}
+                                    <Button type="submit" size="sm">
+                                        Salvar
                                     </Button>
                                 </div>
                             </form>

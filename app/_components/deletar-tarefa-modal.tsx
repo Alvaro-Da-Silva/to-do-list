@@ -13,10 +13,9 @@ interface DeleteModalProps {
 }
 
 export default function DeleteModal({ open, onOpenChange, id, onSuccess }: DeleteModalProps) {
-    const [deleting, setDeleting] = React.useState(false);
 
-//aqui vai a handleDelete(DELETE)
-    
+    //aqui vai o deleteData(DELETE)
+
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -25,7 +24,7 @@ export default function DeleteModal({ open, onOpenChange, id, onSuccess }: Delet
                     <div className='flex items-center justify-center p-6 bg-red-50 md:w-20'>
                         <div className="rounded-full bg-white p-2 shadow-sm">
                             <CircleAlert className='size-8 text-red-600' />
-                            </div>
+                        </div>
                     </div>
 
                     <div className='p-6 flex-1'>
@@ -48,10 +47,10 @@ export default function DeleteModal({ open, onOpenChange, id, onSuccess }: Delet
                             <Button
                                 variant="destructive"
                                 size="sm"
-                                onClick={handleDelete}
-                                disabled={deleting}
+                                // Aqui vai o onClick para chamar a função deleteData
+                                onClick={}
                             >
-                                {deleting ? "Excluindo..." : "Excluir"}
+                                Excluir
                             </Button>
                         </DialogFooter>
                     </div>

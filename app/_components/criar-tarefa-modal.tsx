@@ -22,10 +22,8 @@ type FormValues = {
 
 export default function CreateModal({ open, onOpenChange, onSuccess }: CreateModalProps) {
     const form = useForm<FormValues>({ defaultValues: { title: '', status: false } });
-    const [submitting, setSubmitting] = React.useState(false);
 
-//aqui vai o onSubmit(POST)
- 
+    //aqui vai o postData(POST)
     
 
     return (
@@ -48,7 +46,8 @@ export default function CreateModal({ open, onOpenChange, onSuccess }: CreateMod
                         </div>
 
                         <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)}>
+                            {/* Chamar postData no handleSubmit */}
+                            <form onSubmit={form.handleSubmit()}>
                                 <div className="space-y-3">
                                     <FormField
                                         name="title"
@@ -67,7 +66,11 @@ export default function CreateModal({ open, onOpenChange, onSuccess }: CreateMod
                                             <FormItem>
                                                 <FormControl>
                                                     <div className="flex items-center gap-3">
-                                                        <Checkbox checked={!!field.value} onCheckedChange={(v) => field.onChange(Boolean(v))} className="h-5 w-5 rounded border-primary/50" />
+                                                        <Checkbox
+                                                            checked={!!field.value}
+                                                            onCheckedChange={(v) => field.onChange(Boolean(v))}
+                                                            className="h-5 w-5 rounded border-primary/50"
+                                                        />
                                                         <span className="select-none">Concluída</span>
                                                     </div>
                                                 </FormControl>
@@ -77,11 +80,11 @@ export default function CreateModal({ open, onOpenChange, onSuccess }: CreateMod
                                 </div>
 
                                 <div className="mt-4 flex justify-end gap-2">
-                                    <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange?.(false)} disabled={submitting}>
+                                    <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange?.(false)}>
                                         Cancelar
                                     </Button>
-                                    <Button type="submit" size="sm" disabled={submitting}>
-                                        {submitting ? 'Salvando...' : 'Salvar'}
+                                    <Button type="submit" size="sm">
+                                        Salvar
                                     </Button>
                                 </div>
                             </form>

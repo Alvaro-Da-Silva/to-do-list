@@ -2,20 +2,13 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableHeader,
-  TableRow,
-  TableCell,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCaption, TableHeader, TableRow, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Pencil, Plus, TrashIcon } from "lucide-react";
 import DeleteModal from "./_components/deletar-tarefa-modal";
 import CreateModal from "./_components/criar-tarefa-modal";
 import EditarModal from "./_components/editar-tarefa";
-import Render from "@/components/Render";
+
 type Todo = {
   userId: number;
   id: number;
@@ -25,78 +18,17 @@ type Todo = {
 
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [showCriar, setShowCriar] = useState(false);
   const [showEditar, setShowEditar] = useState(false);
   const [showExcluir, setShowExcluir] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
 
-//aqui vai o fetchData(GET)
+  //aqui vai o getData(GET)
 
-
-
-
-  function handleEdit(todo: Todo) {
-    setSelectedTodo(todo);
-    setShowEditar(true);
-  }
-
-  function handleDelete(todo: Todo) {
-    setSelectedTodo(todo);
-    setShowExcluir(true);
-  }
-
-  function handleTaskCreated(newTodo?: any) {
-    console.log('handleTaskCreated chamado com:', newTodo);
-    if (newTodo) {
-      console.log('Adicionando nova tarefa à lista');
-      setTodos(prev => {
-        // Encontrar o maior ID atual e incrementar
-        const maxId = prev.length > 0 ? Math.max(...prev.map(todo => todo.id)) : 0;
-        const nextId = maxId + 1;
-        
-        const taskWithSequentialId = {
-          ...newTodo,
-          id: nextId
-        };
-        console.log('Tarefa com ID sequencial:', taskWithSequentialId);
-        
-        // Adicionar no final da lista
-        const newList = [...prev, taskWithSequentialId];
-        console.log('Nova lista:', newList.length, 'itens');
-        return newList;
-      });
-    } else {
-      console.log('Recarregando lista completa');
-      fetchData();
-    }
-  }
-
-  function handleTaskUpdated(updatedTodo: any) {
-    console.log('handleTaskUpdated chamado com:', updatedTodo);
-    setTodos(prev => 
-      prev.map(todo => 
-        todo.id === updatedTodo.id 
-          ? { ...todo, title: updatedTodo.title, completed: updatedTodo.completed }
-          : todo
-      )
-    );
-  }
-
-  function handleTaskDeleted(deletedId: number) {
-    console.log('handleTaskDeleted chamado com ID:', deletedId);
-    setTodos(prev => prev.filter(todo => todo.id !== deletedId));
-  }
 
   useEffect(() => {
-    fetchData();
+    getData();
   }, []);
-
-  function toggleCompleted(id: number) {
-    setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
-  }
-
 
   return (
     <>
@@ -132,26 +64,48 @@ export default function Home() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {loading && (
-                    <TableRow>
-                      <TableCell colSpan={4}>Carregando...</TableCell>
-                    </TableRow>
-                  )}
 
-                  {error && (
-                    <TableRow>
-                      <TableCell colSpan={4}>{error}</TableCell>
-                    </TableRow>
-                  )}
+                  {/* Aqui vai o map */}
 
-                  {!loading && !error && todos.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={4}>Nenhuma tarefa encontrada</TableCell>
-                    </TableRow>
-                  )}
-{/* //Aqui vai o map(GET) */}
+                  <TableRow>
+                    <TableCell className="rounded-l-md font-medium">
+                      {/* Aqui vai o ID da tarefa */}
 
+                    </TableCell>
+                    <TableCell className="truncate max-w-[40ch]">
+                      {/* Aqui vai o título da tarefa */}
 
+                    </TableCell>
+                    <TableCell>
+                      {/* Aqui vai verificação de status da tarefa */}
+                      { ? (
+                        <span className="text-green-600 font-medium">Concluída</span>
+                      ) : (
+                        <span className="text-yellow-600 font-medium">Pendente</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="rounded-r-md">
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="border border-muted-foreground/50"
+                          // Aqui vai o onClick de editar tarefa
+                          onClick={ }
+                        >
+                          <Pencil />
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          // Aqui vai o onClick de deletar tarefa
+                          onClick={ }
+                        >
+                          <TrashIcon />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
 
                 </TableBody>
               </Table>
@@ -160,20 +114,29 @@ export default function Home() {
         </div>
       </div>
 
-      <CreateModal open={showCriar} onOpenChange={setShowCriar} onSuccess={handleTaskCreated} />
-      <EditarModal 
-        open={showEditar} 
-        onOpenChange={setShowEditar} 
-        id={selectedTodo?.id ?? 0}
-        title={selectedTodo?.title ?? ''} 
-        status={selectedTodo?.completed ?? false}
-        onSuccess={handleTaskUpdated}
+      <CreateModal
+        open={showCriar}
+        onOpenChange={setShowCriar}
+        // Em caso de sucesso, chamar o getData novamente
+        onSuccess={ }
       />
-      <DeleteModal 
-        open={showExcluir} 
-        onOpenChange={setShowExcluir} 
+
+      <EditarModal
+        open={showEditar}
+        onOpenChange={setShowEditar}
         id={selectedTodo?.id ?? 0}
-        onSuccess={handleTaskDeleted}
+        title={selectedTodo?.title ?? ''}
+        status={selectedTodo?.completed ?? false}
+        // Em caso de sucesso, chamar o getData novamente
+        onSuccess={ }
+      />
+
+      <DeleteModal
+        open={showExcluir}
+        onOpenChange={setShowExcluir}
+        id={selectedTodo?.id ?? 0}
+        // Em caso de sucesso, chamar o getData novamente
+        onSuccess={ }
       />
     </>
   );
