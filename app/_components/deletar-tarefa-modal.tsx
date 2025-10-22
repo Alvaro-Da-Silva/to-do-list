@@ -16,7 +16,6 @@ export default function DeleteModal({ open, onOpenChange, id, onSuccess }: Delet
 
     //aqui vai o deleteData(DELETE)
 
-
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className='sm:max-w-sm p-0 overflow-hidden'>
@@ -47,8 +46,7 @@ export default function DeleteModal({ open, onOpenChange, id, onSuccess }: Delet
                             <Button
                                 variant="destructive"
                                 size="sm"
-                                // Aqui vai o onClick para chamar a função deleteData
-                                onClick={}
+                                onClick={deleteData}
                             >
                                 Excluir
                             </Button>

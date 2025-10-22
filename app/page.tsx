@@ -67,45 +67,6 @@ export default function Home() {
 
                   {/* Aqui vai o map */}
 
-                  <TableRow>
-                    <TableCell className="rounded-l-md font-medium">
-                      {/* Aqui vai o ID da tarefa */}
-
-                    </TableCell>
-                    <TableCell className="truncate max-w-[40ch]">
-                      {/* Aqui vai o título da tarefa */}
-
-                    </TableCell>
-                    <TableCell>
-                      {/* Aqui vai verificação de status da tarefa */}
-                      { ? (
-                        <span className="text-green-600 font-medium">Concluída</span>
-                      ) : (
-                        <span className="text-yellow-600 font-medium">Pendente</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="rounded-r-md">
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="border border-muted-foreground/50"
-                          // Aqui vai o onClick de editar tarefa
-                          onClick={ }
-                        >
-                          <Pencil />
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          size="icon"
-                          // Aqui vai o onClick de deletar tarefa
-                          onClick={ }
-                        >
-                          <TrashIcon />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
 
                 </TableBody>
               </Table>
@@ -117,8 +78,7 @@ export default function Home() {
       <CreateModal
         open={showCriar}
         onOpenChange={setShowCriar}
-        // Em caso de sucesso, chamar o getData novamente
-        onSuccess={ }
+        onSuccess={getData}
       />
 
       <EditarModal
@@ -127,16 +87,14 @@ export default function Home() {
         id={selectedTodo?.id ?? 0}
         title={selectedTodo?.title ?? ''}
         status={selectedTodo?.completed ?? false}
-        // Em caso de sucesso, chamar o getData novamente
-        onSuccess={ }
+        onSuccess={getData}
       />
 
       <DeleteModal
         open={showExcluir}
         onOpenChange={setShowExcluir}
         id={selectedTodo?.id ?? 0}
-        // Em caso de sucesso, chamar o getData novamente
-        onSuccess={ }
+        onSuccess={getData}
       />
     </>
   );

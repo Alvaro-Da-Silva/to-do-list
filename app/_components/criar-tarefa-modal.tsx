@@ -8,6 +8,7 @@ import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus } from "lucide-react";
 import axios from "axios";
+import { title } from "process";
 
 interface CreateModalProps {
     open?: boolean;
@@ -24,6 +25,7 @@ export default function CreateModal({ open, onOpenChange, onSuccess }: CreateMod
     const form = useForm<FormValues>({ defaultValues: { title: '', status: false } });
 
     //aqui vai o postData(POST)
+    
     
 
     return (
@@ -46,8 +48,7 @@ export default function CreateModal({ open, onOpenChange, onSuccess }: CreateMod
                         </div>
 
                         <Form {...form}>
-                            {/* Chamar postData no handleSubmit */}
-                            <form onSubmit={form.handleSubmit()}>
+                            <form onSubmit={form.handleSubmit(postData)}>
                                 <div className="space-y-3">
                                     <FormField
                                         name="title"

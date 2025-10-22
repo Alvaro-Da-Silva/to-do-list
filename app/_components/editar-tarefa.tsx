@@ -33,7 +33,6 @@ export default function EditarModal({ open, onOpenChange, id, title, status, onS
     }, [open, title, status]);
 
     //aqui vai o putData(PUT)
-    
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -55,8 +54,7 @@ export default function EditarModal({ open, onOpenChange, id, title, status, onS
                         </div>
 
                         <Form {...form}>
-                            {/* Chamar putData no handleSubmit */}
-                            <form onSubmit={form.handleSubmit()}>
+                            <form onSubmit={form.handleSubmit(putData)}>
                                 <div className="space-y-3">
                                     
                                     <FormField
